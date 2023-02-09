@@ -109,7 +109,7 @@ class FlutterDownloader {
     assert(Directory(savedDir).existsSync(), 'savedDir does not exist');
 
     try {
-      final metaSrc = metaData != null ? json.encode(metaData) : "";
+      final metaSrc = metaData != null ? json.encode(metaData) : '';
       final taskId = await _channel.invokeMethod<String>('enqueue', {
         'url': url,
         'saved_dir': savedDir,
@@ -141,21 +141,21 @@ class FlutterDownloader {
   }
 
   ///Update meta data to a task
-  static Future<bool> updateMetaData(String taskId, Map<String, dynamic> metaData) async {
-    String metaSrc = json.encode(metaData);
-    final result = await _channel.invokeMethod<dynamic>('updateMetaData', {
+  static Future<bool?> updateMetaData(String taskId, Map<String, dynamic> metaData) async {
+    final metaSrc = json.encode(metaData);
+    final result = await _channel.invokeMethod<bool>('updateMetaData', {
       'task_id': taskId,
       'meta_data': metaSrc,
     });
-    return result as bool;
+    return result;
   }
 
   ///Load a task from a task id
   static Future<DownloadTask?> loadTask(String taskId) async {
-    final result = await _channel.invokeMethod<dynamic>('loadTask', {'task_id': taskId});
+    final result = await _channel.invokeMethod<Map<String, dynamic>>('loadTask', {'task_id': taskId});
     if (result != null) {
-      String metaSrc = result['meta_data'] as String;
-      final metaJson = json.decode(metaSrc);
+      final metaSrc = result['meta_data'] as String;
+      final metaJson = json.decode(metaSrc) as Map<String, dynamic>;
       return DownloadTask(
         taskId: result['task_id'] as String,
         status: DownloadTaskStatus(result['status'] as int),
@@ -189,8 +189,8 @@ class FlutterDownloader {
       return result.map(
         (dynamic item) {
           // item as Map<String, dynamic>; // throws
-          String metaSrc = item['meta_data'] as String;
-          final metaJson = json.decode(metaSrc);
+          final metaSrc = item['meta_data'] as String;
+          final metaJson = json.decode(metaSrc) as Map<String, dynamic>;
           return DownloadTask(
             taskId: item['task_id'] as String,
             status: DownloadTaskStatus(item['status'] as int),
@@ -250,8 +250,8 @@ class FlutterDownloader {
       return result.map(
         (dynamic item) {
           // item as Map<String, dynamic>; // throws
-          String metaSrc = item['meta_data'] as String;
-          final metaJson = json.decode(metaSrc);
+          final metaSrc = item['meta_data'] as String;
+          final metaJson = json.decode(metaSrc) as Map<String, dynamic>;
           return DownloadTask(
             taskId: item['task_id'] as String,
             status: DownloadTaskStatus(item['status'] as int),
